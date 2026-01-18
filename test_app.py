@@ -1,10 +1,20 @@
 from fastapi.testclient import TestClient
 from app import app
-
+from unittest.mock import create_autospec
+from service import CalculatorService, get_calculator
 client = TestClient(app)
 
-def test_ping():
-    response = client.get("/ping")
+def test_add_endpoint():
+    mock_calc = create_autospec(CalculatorService, instance=True , spec_set=True)
+    mock_calc.add.return_value = 11
 
+    app.dependency_overrides[get_calculator] = lambda: mock_calc
+
+    response = client.get("/add?a=3&b=7")
     assert response.status_code == 200
-    assert response.json() == {"message": "pong"}
+    assert response.json() == {"result": 10}
+    mock_calc.add.assert_called_once_with(3, 7)
+    
+    app.dependency_overrides.clear()
+
+
