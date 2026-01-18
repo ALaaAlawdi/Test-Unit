@@ -6,7 +6,7 @@ client = TestClient(app)
 
 def test_add_endpoint():
     mock_calc = create_autospec(CalculatorService, instance=True , spec_set=True)
-    mock_calc.add.return_value = 11
+    mock_calc.add.return_value = 10
 
     app.dependency_overrides[get_calculator] = lambda: mock_calc
 
